@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Spot</title>
+</head>
+<body>
+    <h1>Edit Spot</h1>
+    <form action="/spots/<%=spot._id%>?_method=PUT" method="'POST">
+        <div>
+            <label for="title">Title</label>
+            <input type="text" id="title" name="spot[title]" value="<%=spot.title%>">
+        </div>
+        <div>
+            <label for="location">Location</label>
+            <input type="text" id="location" name="spot[location]" value="<%=spot.location%>">
+        </div>
+        <button>Update Spot</button>
+    </form>
+    <div>
+        <a href="/spots/<%=spot._id%>">Back To Spots</a>
+    </div>
+</body>
+</html>

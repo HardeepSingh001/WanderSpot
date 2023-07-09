@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show</title>
+</head>
+<body>
+    <h1><%=spot.title %></h1>
+    <h3><%=spot.location%></h3>
+
+    <form action="/spots/<%=spot._id%>?_method=DELETE" method="POST">
+        <button>DELETE</button>
+    </form>
+
+    <footer>
+        <a href="/spots/<%=spot._id%>/edit">Edit this Spot</a>
+        <a href="/spots">ALL SPOTS</a>
+    </footer>
+</body>
+</html>
