@@ -1,21 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Show</title>
-</head>
-<body>
-    <h1><%=spot.title %></h1>
-    <h3><%=spot.location%></h3>
+<%layout('layouts/boilerplate')%>
 
-    <form action="/spots/<%=spot._id%>?_method=DELETE" method="POST">
-        <button>DELETE</button>
-    </form>
 
+<div class="row">
+    <div class="col-6 offset-3">
+        <div class="card" >
+            <img src="<%=spot.image%>"card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title"><%=spot.title %></h5>
+              <p class="card-text"><%=spot.descriptoin %></p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item text-muted"><%=spot.location %></li>
+              <li class="list-group-item"><%=spot.price %>/night</li>
+            </ul>
+            <div class="card-body">
+                <a class="card-link btn btn-info" href="/spots/<%=spot._id%>/edit">Edit this Spot</a>
+                <form class="d-inline" action="/spots/<%=spot._id%>?_method=DELETE" method="POST">
+                    <button class="btn btn-danger">DELETE</button>
+                </form>
+            </div>
+          </div>
+    </div>
+</div>
+
+
+    
     <footer>
-        <a href="/spots/<%=spot._id%>/edit">Edit this Spot</a>
+        
         <a href="/spots">ALL SPOTS</a>
     </footer>
-</body>
-</html>
