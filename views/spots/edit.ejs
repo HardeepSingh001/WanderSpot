@@ -5,26 +5,26 @@
 <div class="row">
     <h1 class="text-centre">Edit Spot</h1>
     <div class="col-6 offset-3">
-        <form action="/spots/<%=spot._id%>?_method=PUT" method="'POST">
+        <form action="/spots/<%=spot._id%>?_method=PUT" method="POST" novalidate class="needs-validation">
             <div class="mb-3">
                 <label class="form-label" for="title">Title</label>
-                <input class="form-control" type="text" id="title" name="spot[title]" value="<%=spot.title%>">
+                <input class="form-control" type="text" id="title" name="spot[title]" value="<%=spot.title%>" required>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="location">Location</label>
-                <input class="form-control" type="text" id="location" name="spot[location]" value="<%=spot.location%>">
+                <input class="form-control" type="text" id="location" name="spot[location]" value="<%=spot.location%>" required>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="image">Image URL</label>
-                <input class="form-control" type="text" id="image" name="spot[image]" value="<%=spot.image%>">
+                <input class="form-control" type="text" id="image" name="spot[image]" value="<%=spot.image%>" required>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="price">Spot price</label>
-                <input class="form-control" type="text" id="price" placeholder="0.00" name="spot[price]" value="<%=spot.price%>">
+                <input class="form-control" type="text" id="price" placeholder="0.00" name="spot[price]" value="<%=spot.price%>" required>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="description">Description</label>
-                <textarea class="form-control" type="text" id="description" name="spot[description]"> <%=spot.description%></textarea>
+                <textarea class="form-control" type="text" id="description" name="spot[description]" required> <%=spot.description%></textarea>
             </div>
 
             <div class="mb-3">
@@ -33,7 +33,7 @@
 
             
         </form>
-         <div>\
+         <div>
             <a href="/spots/<%=spot._id%>">Back To Spots</a>
         </div>
     </div>

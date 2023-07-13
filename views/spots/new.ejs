@@ -3,26 +3,26 @@
 <div class="row">
     <h1 class="text-centre">New Spot</h1>
     <div class="col-6 offset-3">
-        <form action="/spots" method="'POST">
+        <form action="/spots" method="POST" novalidate class="needs-validation">
             <div class="mb-3">
                 <label class="form-label" for="title">Title</label>
-                <input class="form-control" type="text" id="title" name="spot[title]">
+                <input class="form-control" type="text" id="title" name="spot[title]" required>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="location">Location</label>
-                <input class="form-control" type="text" id="location" name="spot[location]">
+                <input class="form-control" type="text" id="location" name="spot[location]" required>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="image">Image URL</label>
-                <input class="form-control" type="text" id="image" name="spot[image]">
+                <input class="form-control" type="text" id="image" name="spot[image]" required>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="price">Spot price</label>
-                <input class="form-control" type="text" id="price" placeholder="0.00" name="spot[price]">
+                <input class="form-control" type="text" id="price" placeholder="0.00" name="spot[price]" required>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="description">Description</label>
-                <textarea class="form-control" type="text" id="description" name="spot[description]"></textarea>
+                <textarea class="form-control" type="text" id="description" name="spot[description]" required></textarea>
             </div>
 
             <div class="mb-3">
