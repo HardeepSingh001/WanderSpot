@@ -6,7 +6,7 @@ const methodOverride=require('method-override')
 const ejsMate=require('ejs-mate')
 const catchAsync=require('./utils/catchAsync')
 const ExpressError=require('./utils/ExpressError')
-const bodyParser = require('body-parser');
+const Review=require('./models/review')
 
 app.set('view engine','ejs')
 app.set("views",path.join(__dirname,"views"))
@@ -14,10 +14,10 @@ app.use(express.urlencoded({extended:true}))
 app.use(methodOverride('_method'))
 app.engine('ejs',ejsMate)
 
-// Use body-parser middleware for parsing request bodies
-app.use(bodyParser.urlencoded({ extended: true }));
+
 
 const mongoose=require('mongoose')
+const review = require("./models/review")
 mongoose.connect('mongodb://127.0.0.1:27017/wander-spot',{
     useNewUrlParser: true,
     // useCreateIndex: true,
@@ -47,13 +47,13 @@ app.post('/spots',catchAsync(async(req,res)=>{
     const spot=new Spot(req.body.spot);
     await spot.save();
 
-    res.redirect(`spots/${spot._id}`)
+    res.redirect(`/spots/${spot._id}`)
 
 }))
 
 
 app.get('/spots/:id',catchAsync(async(req,res)=>{
-    const spot=await Spot.findById(req.params.id)
+    const spot=await Spot.findById(req.params.id).populate('reviews');
     res.render('spots/show',{spot})
 }))
 
@@ -66,12 +66,29 @@ app.get('/spots/:id/edit',catchAsync(async(req,res)=>{
 app.put('/spots/:id',catchAsync(async(req,res)=>{
     const spot=await Spot.findByIdAndUpdate(req.params.id,{...req.body.spot})
 
-    res.redirect(`spots/${spot._id}`)
+    res.redirect(`/spots/${spot._id}`)
 }))
 
 app.delete('/spots/:id',catchAsync(async(req,res)=>{
     await Spot.findByIdAndDelete(req.params.id)
     res.redirect('/spots')
+}))
+
+app.post('/spots/:id/reviews', catchAsync(async(req,res)=>{
+    const spot=await Spot.findById(req.params.id)
+    const review=new Review(req.body.review)
+    spot.reviews.push(review);
+    await review.save()
+    await spot.save()
+    res.redirect(`/spots/${spot._id}`)
+}))
+
+
+app.delete('/spots/:id/reviews/:reviewid',catchAsync(async(req,res)=>{
+    const {id, reviewid}=req.params
+    await Spot.findByIdAndUpdate(id,{$pull:{reviews: reviewid}})
+    await Review.findByIdAndDelete(reviewid)
+    res.redirect(`/spots/${id}`)
 }))
 
 app.all('*',(req,res,next)=>{
