@@ -7,11 +7,16 @@ const ejsMate=require('ejs-mate')
 const catchAsync=require('./utils/catchAsync')
 const ExpressError=require('./utils/ExpressError')
 const Review=require('./models/review')
+const session=require('express-session')
+const flash=require('connect-flash')
+
+
 
 app.set('view engine','ejs')
 app.set("views",path.join(__dirname,"views"))
 app.use(express.urlencoded({extended:true}))
 app.use(methodOverride('_method'))
+app.use(express.static(path.join(__dirname,'public')))
 app.engine('ejs',ejsMate)
 
 
@@ -30,6 +35,28 @@ db.once("open",()=>{
     console.log("Database connected");
 });
 
+
+const sessionConfig={
+    secret: 'mysecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie:{
+        httpOnly: true,
+        expires:Date.now()+1000*60*60*24*30,
+        maxAge:1000*60*60*24*30
+     }
+}
+
+app.use(session(sessionConfig))
+app.use(flash())
+
+app.use((req,res,next)=>{
+    res.locals.success=req.flash('success')
+    res.locals.error=req.flash('error')
+    next()
+})
+
+
 app.get('/home',(req,res)=>{
     res.render("home")
 })
@@ -46,7 +73,8 @@ app.get('/spots/new',(req,res)=>{
 app.post('/spots',catchAsync(async(req,res)=>{
     const spot=new Spot(req.body.spot);
     await spot.save();
-
+    
+    req.flash('success','Successfully added a new Spot!')
     res.redirect(`/spots/${spot._id}`)
 
 }))
@@ -66,11 +94,13 @@ app.get('/spots/:id/edit',catchAsync(async(req,res)=>{
 app.put('/spots/:id',catchAsync(async(req,res)=>{
     const spot=await Spot.findByIdAndUpdate(req.params.id,{...req.body.spot})
 
+    req.flash('success','Spot Updated Successfully')
     res.redirect(`/spots/${spot._id}`)
 }))
 
 app.delete('/spots/:id',catchAsync(async(req,res)=>{
     await Spot.findByIdAndDelete(req.params.id)
+    req.flash('success','Spot Deleted')
     res.redirect('/spots')
 }))
 
@@ -80,6 +110,7 @@ app.post('/spots/:id/reviews', catchAsync(async(req,res)=>{
     spot.reviews.push(review);
     await review.save()
     await spot.save()
+    req.flash('success','Added New Review')
     res.redirect(`/spots/${spot._id}`)
 }))
 
@@ -88,6 +119,7 @@ app.delete('/spots/:id/reviews/:reviewid',catchAsync(async(req,res)=>{
     const {id, reviewid}=req.params
     await Spot.findByIdAndUpdate(id,{$pull:{reviews: reviewid}})
     await Review.findByIdAndDelete(reviewid)
+    req.flash('success','Review Deleted')
     res.redirect(`/spots/${id}`)
 }))
 
