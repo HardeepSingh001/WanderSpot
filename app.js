@@ -83,8 +83,9 @@ app.get('/spots/new', isLoggedIn, (req,res)=>{
     res.render('spots/new')
 })
 
-app.post('/spots',catchAsync(async(req,res)=>{
+app.post('/spots', isLoggedIn, catchAsync(async(req,res)=>{
     const spot=new Spot(req.body.spot);
+    spot.author=req.user._id
     await spot.save();
     
     req.flash('success','Successfully added a new Spot!')
@@ -94,32 +95,59 @@ app.post('/spots',catchAsync(async(req,res)=>{
 
 
 app.get('/spots/:id',catchAsync(async(req,res)=>{
-    const spot=await Spot.findById(req.params.id).populate('reviews');
+    const spot=await Spot.findById(req.params.id).populate({
+        path: 'reviews',
+        populate:{
+            path: 'author'
+        }
+    }).populate('author');
     res.render('spots/show',{spot})
 }))
 
 
 app.get('/spots/:id/edit', isLoggedIn, catchAsync(async(req,res)=>{
-    const spot=await Spot.findById(req.params.id)
+    const {id}=req.params
+    const spot=await Spot.findById(id)
+
+    if(!spot.author.equals(req.user._id)){
+        req.flash('error','You are not the Author of This Spot!')
+        return res.redirect(`/spots/${id}`)
+    }
+    
     res.render('spots/edit',{spot})
 }))
 
 app.put('/spots/:id',catchAsync(async(req,res)=>{
-    const spot=await Spot.findByIdAndUpdate(req.params.id,{...req.body.spot})
+    const {id}=req.params
+    const spot=await Spot.findById(id)
+
+    if(!spot.author.equals(req.user._id)){
+        req.flash('error','You are not the Author of This Spot!')
+        return res.redirect(`/spots/${id}`)
+    }
+     const sp=await Spot.findByIdAndUpdate(req.params.id,{...req.body.spot})
 
     req.flash('success','Spot Updated Successfully')
     res.redirect(`/spots/${spot._id}`)
 }))
 
 app.delete('/spots/:id', isLoggedIn, catchAsync(async(req,res)=>{
-    await Spot.findByIdAndDelete(req.params.id)
+    const {id}=req.params
+    const spot=await Spot.findById(id)
+
+    if(!spot.author.equals(req.user._id)){
+        req.flash('error','You are not the Author of This Spot!')
+        return res.redirect(`/spots/${id}`)
+    }
+    await Spot.findByIdAndDelete(id)
     req.flash('success','Spot Deleted')
     res.redirect('/spots')
 }))
 
-app.post('/spots/:id/reviews', catchAsync(async(req,res)=>{
+app.post('/spots/:id/reviews', isLoggedIn, catchAsync(async(req,res)=>{
     const spot=await Spot.findById(req.params.id)
     const review=new Review(req.body.review)
+    review.author=req.user._id
     spot.reviews.push(review);
     await review.save()
     await spot.save()
@@ -128,7 +156,7 @@ app.post('/spots/:id/reviews', catchAsync(async(req,res)=>{
 }))
 
 
-app.delete('/spots/:id/reviews/:reviewid',catchAsync(async(req,res)=>{
+app.delete('/spots/:id/reviews/:reviewid', isLoggedIn, catchAsync(async(req,res)=>{
     const {id, reviewid}=req.params
     await Spot.findByIdAndUpdate(id,{$pull:{reviews: reviewid}})
     await Review.findByIdAndDelete(reviewid)
