@@ -9,6 +9,11 @@ const ExpressError=require('./utils/ExpressError')
 const Review=require('./models/review')
 const session=require('express-session')
 const flash=require('connect-flash')
+const passport=require('passport')
+const LocalStrategy=require('passport-local');
+const passportLocalMongoose=require('passport-local-mongoose')
+const User=require('./models/user')
+const isLoggedIn=require('./utils/middleware')
 
 
 
@@ -53,8 +58,16 @@ app.use(flash())
 app.use((req,res,next)=>{
     res.locals.success=req.flash('success')
     res.locals.error=req.flash('error')
+    res.locals.currentUser=req.user
     next()
 })
+
+app.use(passport.initialize());
+app.use(passport.session());
+// passport.use(User.createStrategy());
+passport.use(new LocalStrategy(User.authenticate()))
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 
 app.get('/home',(req,res)=>{
@@ -66,7 +79,7 @@ app.get("/spots",catchAsync(async(req,res)=>{
     res.render('spots/index',{spots})
 }))
 
-app.get('/spots/new',(req,res)=>{
+app.get('/spots/new', isLoggedIn, (req,res)=>{
     res.render('spots/new')
 })
 
@@ -86,7 +99,7 @@ app.get('/spots/:id',catchAsync(async(req,res)=>{
 }))
 
 
-app.get('/spots/:id/edit',catchAsync(async(req,res)=>{
+app.get('/spots/:id/edit', isLoggedIn, catchAsync(async(req,res)=>{
     const spot=await Spot.findById(req.params.id)
     res.render('spots/edit',{spot})
 }))
@@ -98,7 +111,7 @@ app.put('/spots/:id',catchAsync(async(req,res)=>{
     res.redirect(`/spots/${spot._id}`)
 }))
 
-app.delete('/spots/:id',catchAsync(async(req,res)=>{
+app.delete('/spots/:id', isLoggedIn, catchAsync(async(req,res)=>{
     await Spot.findByIdAndDelete(req.params.id)
     req.flash('success','Spot Deleted')
     res.redirect('/spots')
@@ -122,6 +135,39 @@ app.delete('/spots/:id/reviews/:reviewid',catchAsync(async(req,res)=>{
     req.flash('success','Review Deleted')
     res.redirect(`/spots/${id}`)
 }))
+
+app.get('/register',(req,res)=>{
+    res.render('users/register')
+})
+
+app.post('/register',catchAsync(async(req,res)=>{
+    try{
+    const {email, username, password}=req.body
+    const user=new User({email,username});
+     await User.register(user,password)
+     req.flash('success','Welcome to WanderSpot')
+     res.redirect('/spots')
+    } catch(e){
+        req.flash('error',e.message)
+        res.redirect('/register')
+    }
+     
+}))
+
+app.get('/login',(req,res)=>{
+    res.render('users/login')
+})
+
+app.post('/login',passport.authenticate('local',{failureFlash: true,failureRedirect:'/login'}),(req,res)=>{
+    req.flash('success','Welcome back')
+    res.redirect('/spots')
+})
+
+app.get('/logout',(req,res)=>{
+    req.logout()
+    req.flash('success', 'Logged out!')
+    res.redirect('/spots')
+})
 
 app.all('*',(req,res,next)=>{
     next(new ExpressError('Page Not found',404))
