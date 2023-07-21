@@ -37,12 +37,12 @@ To get started with WanderSpot, follow these steps:
 
 ## Screenshots
 
-![Screenshot1](screenshots/screenshot1.png)
-![Screenshot5](screenshots/screenshot2.png)
-![Screenshot6](screenshots/screenshot2.png)
-![Screenshot2](screenshots/screenshot2.png)
-![Screenshot3](screenshots/screenshot2.png)
-![Screenshot4](screenshots/screenshot2.png)
+![Screenshot1](screenshots/Screenshot1.png)
+![Screenshot5](screenshots/Screenshot5.png)
+![Screenshot6](screenshots/Screenshot6.png)
+![Screenshot2](screenshots/Screenshot2.png)
+![Screenshot3](screenshots/Screenshot3.png)
+![Screenshot4](screenshots/Screenshot4.png)
 
 
 
