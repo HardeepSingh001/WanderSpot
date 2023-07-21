@@ -35,6 +35,19 @@ To get started with WanderSpot, follow these steps:
 - EJS (Embedded JavaScript) as the template engine for rendering views.
 - Bootstrap for responsive and styled user interface.
 
+## Screenshots
+
+![Screenshot1](screenshots/screenshot1.png)
+![Screenshot5](screenshots/screenshot2.png)
+![Screenshot6](screenshots/screenshot2.png)
+![Screenshot2](screenshots/screenshot2.png)
+![Screenshot3](screenshots/screenshot2.png)
+![Screenshot4](screenshots/screenshot2.png)
+
+
+
+
+
 
 ## Contact
 
