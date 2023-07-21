@@ -1,8 +1,10 @@
 <%layout('layouts/boilerplate')%>
 
-<div class="row">
-    <h1 class="text-centre">New Spot</h1>
-    <div class="col-6 offset-3">
+<div class="row mb-3">
+    <h1 class="text-center">New Spot</h1>
+    <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+        <div class="card shadow">
+            <div class="card-body">
         <form action="/spots" method="POST" novalidate class="needs-validation">
             <div class="mb-3">
                 <label class="form-label" for="title">Title</label>
@@ -17,7 +19,7 @@
                 <input class="form-control" type="text" id="image" name="spot[image]" required>
             </div>
             <div class="mb-3">
-                <label class="form-label" for="price">Spot price</label>
+                <label class="form-label" for="price">Spot price (₹)</label>
                 <input class="form-control" type="text" id="price" placeholder="0.00" name="spot[price]" required>
             </div>
             <div class="mb-3">
@@ -31,10 +33,9 @@
 
             
         </form>
-        <div>
-    
-            <a href="/spots">All Spots</a>
-        </div>
+    </div>
+    </div> 
+        
     </div>
 </div>
 

@@ -14,6 +14,9 @@ const LocalStrategy=require('passport-local');
 const passportLocalMongoose=require('passport-local-mongoose')
 const User=require('./models/user')
 const isLoggedIn=require('./utils/middleware')
+const mbxGeocoding=require("@mapbox/mapbox-sdk/services/geocoding")
+const mapBoxToken=process.env.MAPBOX_TOKEN;
+const geocoder=mbxGeocoding({accessToken: 'pk.eyJ1Ijoia25pZ2h0YzBkZXIwMDEiLCJhIjoiY2xrOXl5MzczMDJjODNrcWQxZXNteGhvbiJ9.ArZj2XloX_7m4NTtK0y4jQ'})
 
 
 
@@ -56,10 +59,10 @@ app.use(session(sessionConfig))
 app.use(flash())
 
 app.use((req,res,next)=>{
-    res.locals.success=req.flash('success')
-    res.locals.error=req.flash('error')
-    res.locals.currentUser=req.user
-    next()
+    res.locals.currentUser=req.user;
+    res.locals.success=req.flash('success');
+    res.locals.error=req.flash('error');
+    next();
 })
 
 app.use(passport.initialize());
@@ -71,20 +74,29 @@ passport.deserializeUser(User.deserializeUser());
 
 
 app.get('/home',(req,res)=>{
-    res.render("home")
+    const currentUser = req.user;
+    res.render("home",{currentUser})
 })
 
 app.get("/spots",catchAsync(async(req,res)=>{
     const spots=await Spot.find({});
-    res.render('spots/index',{spots})
+    const currentUser = req.user;
+    res.render('spots/index',{spots,currentUser})
 }))
 
 app.get('/spots/new', isLoggedIn, (req,res)=>{
-    res.render('spots/new')
+    const currentUser = req.user;
+    res.render('spots/new',{currentUser})
 })
 
 app.post('/spots', isLoggedIn, catchAsync(async(req,res)=>{
+    const geoData=await geocoder.forwardGeocode({
+        query: req.body.spot.location,
+        limit: 1
+    }).send()
+    //res.send(geoData.body.features[0].geomety.coodinates)
     const spot=new Spot(req.body.spot);
+    spot.geometry=geoData.body.features[0].geometry
     spot.author=req.user._id
     await spot.save();
     
@@ -101,20 +113,22 @@ app.get('/spots/:id',catchAsync(async(req,res)=>{
             path: 'author'
         }
     }).populate('author');
-    res.render('spots/show',{spot})
+    const currentUser = req.user;
+    res.render('spots/show',{spot,currentUser})
 }))
 
 
 app.get('/spots/:id/edit', isLoggedIn, catchAsync(async(req,res)=>{
     const {id}=req.params
     const spot=await Spot.findById(id)
+    const currentUser = req.user;
 
     if(!spot.author.equals(req.user._id)){
         req.flash('error','You are not the Author of This Spot!')
         return res.redirect(`/spots/${id}`)
     }
     
-    res.render('spots/edit',{spot})
+    res.render('spots/edit',{spot,currentUser})
 }))
 
 app.put('/spots/:id',catchAsync(async(req,res)=>{
@@ -165,7 +179,8 @@ app.delete('/spots/:id/reviews/:reviewid', isLoggedIn, catchAsync(async(req,res)
 }))
 
 app.get('/register',(req,res)=>{
-    res.render('users/register')
+    const currentUser = req.user;
+    res.render('users/register',{currentUser})
 })
 
 app.post('/register',catchAsync(async(req,res)=>{
@@ -183,7 +198,8 @@ app.post('/register',catchAsync(async(req,res)=>{
 }))
 
 app.get('/login',(req,res)=>{
-    res.render('users/login')
+    const currentUser = req.user;
+    res.render('users/login',{currentUser})
 })
 
 app.post('/login',passport.authenticate('local',{failureFlash: true,failureRedirect:'/login'}),(req,res)=>{
@@ -191,11 +207,15 @@ app.post('/login',passport.authenticate('local',{failureFlash: true,failureRedir
     res.redirect('/spots')
 })
 
-app.get('/logout',(req,res)=>{
-    req.logout()
-    req.flash('success', 'Logged out!')
-    res.redirect('/spots')
-})
+app.get('/logout',function(req, res, next){
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      req.flash('success', 'Logged out!')
+      res.redirect('/spots');
+    });
+  });
+
+
 
 app.all('*',(req,res,next)=>{
     next(new ExpressError('Page Not found',404))

@@ -1,5 +1,7 @@
 <%layout('layouts/boilerplate')%>
 <link rel="stylesheet" href="/stylesheets/stars.css">
+
+
  
 <div class="row">
     <div class="col-6 ">
@@ -12,7 +14,8 @@
             <ul class="list-group list-group-flush">
               <li class="list-group-item text-muted"><%=spot.location %></li>
               <li class="list-group-item">Spot added by <%=spot.author.username%></li>
-              <li class="list-group-item"><%=spot.price %>/night</li>
+              <li class="list-group-item">₹ <%=spot.price %>/night</li>
+              <li class="list-group-item"><%=spot.geometry.coodinates%></li>
             </ul>
             <div class="card-body">
                 <a class="card-link btn btn-info" href="/spots/<%=spot._id%>/edit">Edit this Spot</a>
@@ -25,6 +28,8 @@
 
 
     <div class="col-6 ">
+      <div id='map' style='width: 600px; height: 300px;'></div>
+      
           <h2>Leave a Review</h2>
           <form class="mb-3 needs-validation" action="/spots/<%=spot._id%>/reviews" method="POST" novalidate>
             <!-- <div class="mb-3">
@@ -33,7 +38,7 @@
             </div> -->
             <div class="mb-3">
             <fieldset class="starability-growRotate">
-                <legend>First rating:</legend>
+                <legend>Rating:</legend>
                 <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
                 <input type="radio" id="first-rate1" name="review[rating]" value="1" />
                 <label for="first-rate1" title="Terrible">1 star</label>
@@ -77,7 +82,36 @@
 
 
     
-    <footer>
-        
-        <a href="/spots">ALL SPOTS</a>
-    </footer>
+    
+    <!-- <script>
+      const mapToken='pk.eyJ1Ijoia25pZ2h0YzBkZXIwMDEiLCJhIjoiY2xrOXl5MzczMDJjODNrcWQxZXNteGhvbiJ9.ArZj2XloX_7m4NTtK0y4jQ';
+      const spot= <%-JSON.stringify(spot)%>;
+    </script> 
+ -->
+
+<script>
+  // TO MAKE THE MAP APPEAR YOU MUST
+// ADD YOUR ACCESS TOKEN FROM
+// https://account.mapbox.com
+//const spot= '<%-JSON.stringify(spot)%>'
+mapboxgl.accessToken = 'pk.eyJ1Ijoia25pZ2h0YzBkZXIwMDEiLCJhIjoiY2xrOXl5MzczMDJjODNrcWQxZXNteGhvbiJ9.ArZj2XloX_7m4NTtK0y4jQ';
+const map = new mapboxgl.Map({
+    container: 'map', // container ID
+    style: 'mapbox://styles/mapbox/streets-v12', //  style URL
+    center: [74.19552, 30.144533],//spot.geometry.coorinates, // starting position [lng, lat]
+    zoom: 8, // starting zoom
+});
+
+map.addControl(new mapboxgl.NavigationControl());
+
+new mapboxgl.Marker()
+    .setLngLat([74.19552, 30.144533])//spot.geometry.coorinates)
+    .setPopup(
+        new mapboxgl.Popup({offset:25})
+        .setHTML(
+            `<h3>${spot.title}</h3><p>${spot.location}</p>`
+        )
+    )
+    .addTo(map)
+</script>
+    <!-- <script src="/javascripts/showPageMap.js"></script> -->

@@ -1,13 +1,14 @@
 <%layout('layouts/boilerplate')%>
-    <h1>Spots</h1>
-    <div>
-        <a href="/spots/new">Add New Spot</a>
-    </div>
+
+<div id="map" style="width: 100%; height: 500px"></div>
+
+    <h1>All Spots</h1>
+    
  
         <%for(let spot of spots){ %>
-            <div class="card" mb-3>
+            <div class="card mb-3" >
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="height: 100%">
                         <img class="img-fluid"src="<%=spot.image %>" alt="">
                     </div>
                     <div class="col-md-8">
@@ -23,4 +24,14 @@
                 </div>
             </div>
          <%}%>
+
+
+         <script>
+            const mapToken='<%-process.env.MAPBOX_TOKEN%>';
+            const spots= {features: '<%-JSON.stringify(spots)%>'}
+          </script> 
+
+
+
+<script src="/javascripts/clusterMap.js"></script>
             

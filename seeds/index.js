@@ -24,11 +24,18 @@ const seedDB=async()=>{
         const random200=Math.floor(Math.random()*200);
         const price=Math.floor(Math.random()*1000)+10;
         const s=new Spot({
+            geometry:{
+                type:"Point",
+                coordinates: [cities[random200].Longitude,cities[random200].Latitude]
+                
+            },
+            author:'64b84142081914bb2ce7eb53',
             location: `${cities[random200].City}, ${cities[random200].State}`,
             title: `${sample(descriptors)} ${sample(places)}`,
-            image: 'https://source.unsplash.com/collection/483251',
-            description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro enim dolore qui fugit est minus, voluptas nesciunt, ducimus quo consequuntur perferendis. Id consectetur impedit eius dignissimos tempore qui cupiditate voluptatum?',
-            price: price
+            image: `https://source.unsplash.com/collection/483251?sig=${random200}`,
+            description: 'This Spot is an enchanting retreat nestled amidst the natural splendor of the great outdoors. It is a sanctuary for nature enthusiasts, adventurers, and families seeking to escape the hustle and bustle of city life. Surrounded by lush forests, picturesque landscapes, and serene lakes, It offers a haven of tranquility and opportunities for unforgettable experiences. Here, you can immerse yourself in the soothing sounds of chirping birds and rustling leaves, relishing the fresh mountain air. Enjoy a cozy campfire under the starlit sky, sharing stories and creating cherished memories with loved ones. The spot provides a perfect blend of modern amenities and rustic charm, offering well-maintained facilities, comfortable cabins, and spacious tents for a restful night sleep.',
+            price: price,
+           
         })
         await s.save();
     }

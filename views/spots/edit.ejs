@@ -2,9 +2,11 @@
 
 
     
-<div class="row">
-    <h1 class="text-centre">Edit Spot</h1>
-    <div class="col-6 offset-3">
+<div class="row mb-3">
+    <h1 class="text-center">Edit Spot</h1>
+    <div class="col-md-6 offset-md-3">
+        <div class="card shadow">
+            <div class="card-body">
         <form action="/spots/<%=spot._id%>?_method=PUT" method="POST" novalidate class="needs-validation">
             <div class="mb-3">
                 <label class="form-label" for="title">Title</label>
@@ -19,7 +21,7 @@
                 <input class="form-control" type="text" id="image" name="spot[image]" value="<%=spot.image%>" required>
             </div>
             <div class="mb-3">
-                <label class="form-label" for="price">Spot price</label>
+                <label class="form-label" for="price">Spot price (₹)</label>
                 <input class="form-control" type="text" id="price" placeholder="0.00" name="spot[price]" value="<%=spot.price%>" required>
             </div>
             <div class="mb-3">
@@ -33,9 +35,9 @@
 
             
         </form>
-         <div>
-            <a href="/spots/<%=spot._id%>">Back To Spots</a>
         </div>
+        </div>
+         
     </div>
 </div>
 
