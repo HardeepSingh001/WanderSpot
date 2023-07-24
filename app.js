@@ -78,6 +78,11 @@ app.get('/home',(req,res)=>{
     res.render("home",{currentUser})
 })
 
+app.get('/',(req,res)=>{
+    const currentUser = req.user;
+    res.render("home",{currentUser})
+})
+
 app.get("/spots",catchAsync(async(req,res)=>{
     const spots=await Spot.find({});
     const currentUser = req.user;
