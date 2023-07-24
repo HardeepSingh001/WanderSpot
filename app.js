@@ -15,7 +15,7 @@ const passportLocalMongoose=require('passport-local-mongoose')
 const User=require('./models/user')
 const isLoggedIn=require('./utils/middleware')
 const mbxGeocoding=require("@mapbox/mapbox-sdk/services/geocoding")
-const mapBoxToken=process.env.MAPBOX_TOKEN;
+// const mapBoxToken=process.env.MAPBOX_TOKEN;
 const geocoder=mbxGeocoding({accessToken: 'pk.eyJ1Ijoia25pZ2h0YzBkZXIwMDEiLCJhIjoiY2xrOXl5MzczMDJjODNrcWQxZXNteGhvbiJ9.ArZj2XloX_7m4NTtK0y4jQ'})
 
 
