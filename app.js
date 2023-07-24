@@ -31,7 +31,7 @@ app.engine('ejs',ejsMate)
 
 const mongoose=require('mongoose')
 const review = require("./models/review")
-mongoose.connect('mongodb://127.0.0.1:27017/wander-spot',{
+mongoose.connect('mongodb+srv://knightc0der001:h7355435535@wander-spot.0ps6fyd.mongodb.net/?retryWrites=true&w=majority',{
     useNewUrlParser: true,
     // useCreateIndex: true,
     useUnifiedTopology: true

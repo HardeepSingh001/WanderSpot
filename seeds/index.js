@@ -4,7 +4,7 @@ const cities=require('./cities')
 const {places,descriptors}=require('./seedHelpers')
 
 const mongoose=require('mongoose')
-mongoose.connect('mongodb://127.0.0.1:27017/wander-spot',{
+mongoose.connect('mongodb+srv://knightc0der001:h7355435535@wander-spot.0ps6fyd.mongodb.net/?retryWrites=true&w=majority',{
     useNewUrlParser: true,
     // useCreateIndex: true,
     useUnifiedTopology: true
@@ -29,7 +29,7 @@ const seedDB=async()=>{
                 coordinates: [cities[random200].Longitude,cities[random200].Latitude]
                 
             },
-            author:'64b84142081914bb2ce7eb53',
+            author:'64be78470a64e733b35cf3a9',
             location: `${cities[random200].City}, ${cities[random200].State}`,
             title: `${sample(descriptors)} ${sample(places)}`,
             image: `https://source.unsplash.com/collection/483251?sig=${random200}`,
